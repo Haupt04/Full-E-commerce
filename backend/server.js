@@ -3,6 +3,7 @@ import dotenv from "dotenv"
 import authRoutes from "./routes/auth.route.js"
 import { connectDB } from "./lib/db.js"
 import cookieParser from "cookie-parser"
+import productsRoutes from "./routes/product.route.js"
 
 
 dotenv.config() // Allow us to access the environment variable 
@@ -13,6 +14,8 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json()) // ready parse data
 app.use(cookieParser())
 app.use("/api/auth", authRoutes)
+app.use("/api/products",productsRoutes)
+
 
 
 app.listen(PORT, () => {
