@@ -4,6 +4,7 @@ import authRoutes from "./routes/auth.route.js"
 import { connectDB } from "./lib/db.js"
 import cookieParser from "cookie-parser"
 import productsRoutes from "./routes/product.route.js"
+import cartRoutes from "./routes/cart.route.js"
 
 
 dotenv.config() // Allow us to access the environment variable 
@@ -15,6 +16,8 @@ app.use(express.json()) // ready parse data
 app.use(cookieParser())
 app.use("/api/auth", authRoutes)
 app.use("/api/products",productsRoutes)
+app.use("/api/cart", cartRoutes)
+
 
 
 
