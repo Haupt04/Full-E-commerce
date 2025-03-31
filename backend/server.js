@@ -6,6 +6,8 @@ import cookieParser from "cookie-parser"
 import productsRoutes from "./routes/product.route.js"
 import cartRoutes from "./routes/cart.route.js"
 import analyticsRoutes from "./routes/analytic.route.js"
+import couponRoutes from "./routes/coupon.route.js"
+import paymentRoutes from "./routes/payment.route.js"
 
 
 dotenv.config() // Allow us to access the environment variable 
