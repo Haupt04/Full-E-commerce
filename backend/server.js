@@ -5,6 +5,7 @@ import { connectDB } from "./lib/db.js"
 import cookieParser from "cookie-parser"
 import productsRoutes from "./routes/product.route.js"
 import cartRoutes from "./routes/cart.route.js"
+import analyticsRoutes from "./routes/analytic.route.js"
 
 
 dotenv.config() // Allow us to access the environment variable 
@@ -20,6 +21,8 @@ app.use("/api/products",productsRoutes)
 app.use("/api/cart", cartRoutes)
 app.use("/api/coupons", couponRoutes)
 app.use("/api/payments", paymentRoutes)
+app.use("/api/analytics", analyticsRoutes)
+
 
 
 
