@@ -15,7 +15,7 @@ dotenv.config() // Allow us to access the environment variable
 const app = express()
 const PORT = process.env.PORT || 5000;
 
-app.use(express.json()) // ready parse data
+app.use(express.json({limit: '10mb'})) // ready parse data
 app.use(cookieParser())
 
 app.use("/api/auth", authRoutes)
@@ -24,12 +24,6 @@ app.use("/api/cart", cartRoutes)
 app.use("/api/coupons", couponRoutes)
 app.use("/api/payments", paymentRoutes)
 app.use("/api/analytics", analyticsRoutes)
-
-
-
-
-
-
 
 
 app.listen(PORT, () => {
