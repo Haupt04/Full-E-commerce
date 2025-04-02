@@ -14,7 +14,7 @@ const generateTokens = (userId) => {
 }
 
 const storeRefreshToken = async (userId, refreshToken) => {
-    await redis.set(`refresh_token: ${userId}`, refreshToken, "EX", 7*24*60*60)
+    await redis.set(`refresh_token:${userId}`, refreshToken, "EX", 7 * 24 * 60 * 60)
 }
 
 const setCookies = (res, accessToken, refreshToken) => {
@@ -58,7 +58,7 @@ export const signup = async (req, res) => {
             role: user.role
         })
     } catch (error) {
-        res.status(500).json({message: "Failed to create user"})
+        res.status(500).json({message: error.message})
         console.log("Error in signup function: ", error.message)
     }
 }
@@ -87,7 +87,6 @@ export const login = async (req, res) => {
 		res.status(500).json({ message: error.message });
 	}
 };
-
 
 
 export const logout = async (req, res) => {
