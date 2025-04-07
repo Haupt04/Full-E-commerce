@@ -2,17 +2,33 @@ import {motion} from 'framer-motion'
 import { useCartStore } from '../../stores/useCartStore'
 import { MoveRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { loadStripe } from "@stripe/stripe-js"
+import axiosInstance from '../lib/axios'
+
+const stripePromise = loadStripe("pk_test_51R7d1xQIc0ZUbKRMI5BVHdf64O74ul6wj4Wc4MbhA1cY1u2RQOlAkcFGAshgMumsIWpfuXPSyqDSNCfbqdSgWeCm001JywWWTH")
 
 const OrderSummary = () => {
-  const { total, subtotal, coupon, isCouponApplied} = useCartStore()
+  const { total, subtotal, coupon, isCouponApplied, cart} = useCartStore()
   const saving = subtotal - total
 
   const formattedSubtotal = subtotal.toFixed(2);
   const formattedTotal = total.toFixed(2);
   const formattedSaving = saving.toFixed(2);
   
-  const handleClick = () => {
+  const handlePayment = async () => {
+    const stripe = await stripePromise;
 
+    const res = await axiosInstance.post("/payments/create-checkout-session", 
+      {products: cart, coupon: coupon ? coupon.code : null});
+
+    const session = res.data
+    const result = await stripe.redirectToCheckout({
+      sessionId: session.id,
+    });
+
+    if (result.error) {
+      console.error("Error", result.error)
+    }
   }
 
   return (
@@ -33,7 +49,7 @@ const OrderSummary = () => {
           {saving > 0 && (
             <dl className='flex items-center justify-between gap-4'>
               <dt className='text-base font-normal text-gray-300'>Savings</dt>
-              <dd className='text-base font-medium text-orange-500'>R{formattedSubtotal}</dd>
+              <dd className='text-base font-medium text-orange-500'>R{formattedSaving}</dd>
             </dl>
           )}
 
@@ -54,7 +70,7 @@ const OrderSummary = () => {
         className='flex w-full items-center justify-center rounded-lg bg-orange-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-orange-700 focus:outline-none focus:ring-4 focus:ring-orange-400'
         whileHover={{scale: 1.05}}
         whileTop={{scale: 0.95}}
-        onClick={handleClick}
+        onClick={handlePayment}
         >
           Proceed to Checkout
         </motion.button>
