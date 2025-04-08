@@ -1,6 +1,6 @@
 import {create} from 'zustand'
-import axios from '../src/lib/axios'
 import {toast} from "react-hot-toast"
+import axiosInstance from '../src/lib/axios';
 
 export const useCartStore = create((set, get) => ({
     cart:[],
@@ -10,7 +10,7 @@ export const useCartStore = create((set, get) => ({
 
     getCartItems: async () => {
         try {
-            const res = await axios.get("/cart");
+            const res = await axiosInstance.get("/cart");
             set({cart: res.data})
             get().calculateTotals();
         } catch (error) {
@@ -18,13 +18,42 @@ export const useCartStore = create((set, get) => ({
             toast.error(error.response.data.message || "An error occurred")
         }
     },
+    getMyCoupon: async () => {
+        try {
+            console.log("Fetching coupon for user");
+            const response = await axiosInstance.get("/coupons");
+            console.log("Fetched coupon data:", response.data);
+            set({coupon: response.data.coupon});
+        } catch (error) {
+            console.log("Error fetching coupon:", error)
+        }
+    },
+
+    applyCoupon: async (code) =>  {
+        try {
+            const response = await axiosInstance.post("/coupons/validate", {code});
+            set({coupon: response.data, isCouponApplied: true})
+            get().calculateTotals();
+            toast.success("Coupon applied successfully")
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to apply coupon")
+        }
+    },
+
+    removeCoupon: () => {
+        set({coupon: null, isCouponApplied: false});
+        get().calculateTotals();
+        toast.success("Coupon removed")
+    },
+
+
     clearCart: async () => {
         set({cart: [], coupon: null, total: 0, subtotal: 0})
     },
 
     addToCart: async (product) => {
         try {
-            await axios.post("/cart", {productId: product._id});
+            await axiosInstance.post("/cart", {productId: product._id});
             toast.success("Product added to cart")
 
             set((prevState)=> {
@@ -53,7 +82,7 @@ export const useCartStore = create((set, get) => ({
         set({subtotal, total})
     }, 
     removeFromCart: async (productId) => {
-        await axios.delete(`/cart`, { data: { productId}} );
+        await axiosInstance.delete(`/cart`, { data: { productId}} );
         set(prevState => ({cart: prevState.cart.filter(item => item._id !== productId)}))
         get().calculateTotals();
     },
@@ -63,7 +92,7 @@ export const useCartStore = create((set, get) => ({
             return
         }
 
-        await axios.put(`/cart/${productId}`, {quantity})
+        await axiosInstance.put(`/cart/${productId}`, {quantity})
         set((prevState) => ({
             cart: prevState.cart.map((item) => (item._id === productId ? {...item, quantity} : item))
         }))
