@@ -57,7 +57,50 @@ export const useUserStore = create((set, get) => ({
             console.log(error.message)
         }
     },
+    refreshToken: async () => {
+        // Prevent multiple simultaneous refresh attempts
+        if (get().checkingAuth) return ;
 
+        set({checkingAuth: true});
+        try {
+            const response = await axios.post("/auth/refresh-token")
+            set({checkingAuth: false});
+            return response.data;
+        } catch (error) {
+            set({user: null, checkingAuth: false});
+            throw error;
+        }
+    }
+}));
 
+ // Refresh Access Token after 15 mins
+ let refreshPromise = null;
+ 
+ axios.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+        const originalRequest = error.config;
+        if (error.response?.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+            try {
+                // Wait for it to complete if the refresh is already in process
+                if (refreshPromise){
+                    await refreshPromise;
+                    return axios(originalRequest)
+                }
 
-}))
+                // Create a new refresh token
+                refreshPromise = useUserStore.getState().refreshToken()
+                await refreshPromise;
+                refreshPromise = null;
+
+                return axios(originalRequest)
+            } catch (refreshError) {
+                // refresh fails then redirect to login
+                useUserStore.getState().logout()
+                return Promise.reject(refreshError)
+            }
+        }
+        return Promise.reject(error)
+    }
+ )
