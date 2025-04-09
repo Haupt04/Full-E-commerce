@@ -4,9 +4,9 @@ import { useProductStore } from "../../stores/useProductStore"
 
 
 export const ProductList = () => {
-  const {deleteProduct, toggleFeaturedProduct, fetchAllProducts, products} = useProductStore();
+  const {deleteProduct, toggleFeaturedProduct, products} = useProductStore();
 
-  console.log("products",products)
+  
 
   return (
     <motion.div

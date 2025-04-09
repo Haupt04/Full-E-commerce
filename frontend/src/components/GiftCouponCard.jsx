@@ -24,7 +24,7 @@ const GiftCouponCard = () => {
 		setUserInputCode("");
 	};
 
-	console.log("Coupon", coupon)
+	
 	return (
 		<motion.div
 			className='space-y-4 rounded-lg border border-gray-700 bg-gray-800 p-4 shadow-sm sm:p-6'
