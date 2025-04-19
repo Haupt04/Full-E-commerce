@@ -71,3 +71,7 @@ It is live on at https://full-e-commerce-jrg5.onrender.com
 
 Note: The website will spin down with inactivity, which can delay requests by 50 seconds or more.
 
+## Acknowledgements
+This project was created with the help of the following tutorial:
+ FREE Coding Bootcamp - Build 4 Full Stack Projects in 23 Hours ([YouTube Link](https://www.youtube.com/watch?v=MDZC8VDZnV8)) by Codesistency.
+
